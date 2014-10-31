@@ -1,0 +1,159 @@
+import sys
+from prody import *
+import numpy as np
+import matplotlib.pyplot as plt 
+import matplotlib.animation as animation
+
+def plot_multiple_species_hist(y,x,yerr=None,out_name='species_cont.pdf', title='',xlabel=r'Z($\AA$)',ylabel='species Count',xticks_label=None,yticks_label=None,labels=None):
+  
+  plt.title(title)
+  plt.xlabel(xlabel)
+  plt.ylabel(ylabel)
+  plt.ylim(0,np.max(y))
+  for i in range(len(y[0,:])):
+       
+        if yerr!=None:
+		plt.errorbar(x,y[:,i],yerr=yerr[:,i],label=labels[i])
+        else:
+		plt.plot(x,y[:,i])
+  if labels!=None: plt.legend()
+  plt.savefig(out_name)
+  plt.close()
+
+
+
+
+def animate_species_hist(y,x,out_name='species_cont.gif', title='',xlabel='time(ns)',ylabel=r'Z($\AA$)',xticks_label=None,yticks_label=None):
+  fig,ax=plt.subplots()
+  line,=ax.plot(x,y[:,0])
+  def animate(i):
+	line.set_ydata(y[:,i])
+	return line
+  def init():
+	line.set_ydata(np.ma.array(x,mask=True))
+  ani=animation.FuncAnimation(fig,animate,range(len(y[:,0])),repeat=False)
+  ani.save(out_name,writer='imagemagick')
+
+
+def plot_species_hist_by_time(hist,out_name='species_cont.pdf', title='',xlabel='time(ns)',ylabel=r'Z($\AA$)',xticks_label=None,yticks_label=None):
+  plt.imshow(hist,aspect='auto')
+  plt.colorbar()
+  plt.title(title)
+  plt.xlabel(xlabel)
+  plt.ylabel(ylabel)
+  if xticks_label!= None: plt.xticks(range(0,len(xticks_label),1),xticks_label[::1],rotation=0,fontsize=10)
+  if yticks_label!= None: plt.yticks(range(0,len(yticks_label),3),yticks_label[::3],fontsize=10)
+  plt.savefig(out_name)
+  plt.close()
+
+
+#PDB_file="/Scr/danial/DAT/apo/build/step5_assembly.pdb"
+#DCD_file="/Scr/danial/DAT/apo/general_analysis/all_traj_apo_10.dcd"
+#out_name='apo'
+#region="protein and name CA"
+#species="species and name OH2"
+
+hist_bin_size=2.0
+step=100
+dcd_step_per_ns=50.0
+########parsing_inp
+
+f=open(sys.argv[1])
+data=f.readlines()
+
+for line in data:
+   line=line.rstrip('\n')
+   if len(line)>0 and not line.startswith('#') : var,value=line.split("=")
+   #print("var: ", var," value: ",value)
+   if var=='DCD_file':
+	DCD_file=value
+   if var=='PDB_file':
+	PDB_file=value
+   if var=='out_name':
+	out_name=value
+   if var=='region':
+	region=value
+   if var=='species':
+	species=value
+   if var=='hist_bin_size':
+	hist_bin_size=float(value)
+   if var=='step':
+	step=int(value)
+   if var=='dcd_step_per_ns':
+	dcd_step_per_ns=float(value)
+############################################################################################################3
+def count_hist(PDB_file,DCD_files,out_name=,hist_bin_size=2,step=100,region='protein',species='water',xymargin=[0,0],zmax=None,dcd_step_per_ns=1):
+	structure = parsePDB(PDB_file)
+	traj = Trajectory(DCD_files[0])
+	for i in range (1,len(DCD_files)):
+	   traj.addFile(DCD_files[i])
+	###traj.addFile(DCD_file2)
+	traj.link(structure)
+	traj.setAtoms(structure)
+	traj.setCoords(structure)
+
+	nf=traj.numFrames()
+	start=0
+	stop=nf
+	print ("total number of frame is:" , nf) 
+	#####This operation set the coordinates of the structure as the reference coordinates of the ensemble. Now we can Ensemble.superpose() the ensemble onto the coordinates of the structure.
+
+	array_size=(stop-start)//step
+
+	coord_sel_region=structure.select(region)
+	coord_sel_region_indices= coord_sel_region.getIndices()
+	region_xyz=traj.getCoords()[tuple(coord_sel_region_indices),:]
+	region_max=np.amax(region_xyz,axis=0)
+	region_min=np.amin(region_xyz,axis=0)
+	region_max[0:2]-=xymargin
+	region_min[0:2]+=xymargin
+	if zmax!=None
+		region_max[2]=15.0
+		region_min[2]=-15.0
+	hist_range=np.arange(region_min[2],region_max[2],hist_bin_size)
+
+
+	coord_sel_species=structure.select(species)
+	coord_sel_species_indices= coord_sel_species.getIndices()
+	species_region=[]
+	species_region_hist=[]
+	time_in_ns=[]
+	for i, frame in enumerate(traj):
+
+	    if i%step==0:
+		
+		species_xyz=frame.getCoords()[tuple(coord_sel_species_indices),:]
+		
+		region_species_xyz=species_xyz[(region_max[0]>species_xyz[:,0]) & (region_max[1]>species_xyz[:,1]) & (region_max[2]>species_xyz[:,2]) & (region_min[0]<species_xyz[:,0]) & (region_min[1]<species_xyz[:,1]) & (region_min[2]<species_xyz[:,2]),:]
+		region_species_z=region_species_xyz[:,2]
+		#print("region_species_z.shape", region_species_z.shape)
+		hist,bin_edge=np.histogram(region_species_z,bins=hist_range)
+		species_region_hist.append(hist)
+		species_region.append([i,hist.sum()])
+		time_in_ns.append(i/dcd_step_per_ns)
+		#print ("hist.sum: ",hist.sum(),i)
+
+	#print("species_region",species_region)
+	species_region_hist=np.array(species_region_hist).T
+	species_region=np.array(species_region)
+
+	#print("species_region.shape",species_region.shape)
+	np.savetxt(out_name+"_"+species+'_count.out',species_region,delimiter=' ')
+	return species_region_hist,bin_edge,time_in_ns
+#print("time_in_ns",time_in_ns)
+#print("hist_range",hist_range)
+plot_species_hist_by_time(species_region_hist,out_name=out_name+'_species_cont_hist_by_time.pdf',title=out_name,xticks_label=time_in_ns,yticks_label=hist_range)
+print(species_region_hist.shape,bin_edge.shape,hist_range.shape)
+x=bin_edge[:len(species_region_hist)]
+#animate_species_hist(species_region_hist,x,out_name=out_name+'_species_cont_hist_by_time.gif',title=out_name,xticks_label=time_in_ns,yticks_label=hist_range)
+mean_begin=np.mean(species_region_hist[:,0:5],axis=1)
+mean_end=np.mean(species_region_hist[:,-5:-1],axis=1)
+std_begin=np.std(species_region_hist[:,0:5],axis=1)
+std_end=np.std(species_region_hist[:,-5:-1],axis=1)
+mean_begin_end=[mean_begin,mean_end]
+std_begin_end=[std_begin,std_end]
+mean_begin_end=np.array(mean_begin_end).T
+std_begin_end=np.array(std_begin_end).T
+print(mean_begin_end.shape)
+#print first_and_last
+plot_multiple_species_hist(mean_begin_end,x,yerr=std_begin_end,out_name=out_name+'_species_cont_hist.pdf',title=out_name,xticks_label=time_in_ns,yticks_label=hist_range,labels=['OF','IF'])

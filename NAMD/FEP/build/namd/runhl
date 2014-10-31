@@ -1,0 +1,28 @@
+#!/bin/bash
+
+JOBNAME="${1/%.inp/}"
+NCPUS="${2}"
+HOLD="${3}"
+
+if [ -z "$1" ]; then
+  echo "Useage: runl NAMD_CONF_FILE PROCS HOLDID"
+  exit
+fi
+if [ ! -f $JOBNAME.inp ]; then
+	echo "NAMD input file $JOBNAME.inp does not exist!"
+	exit -1
+fi
+if [ -f $JOBNAME.log ]; then
+	mv $JOBNAME.log $JOBNAME.log.BAK
+	echo "NAMD output file $JOBNAME.log already exists!"
+	echo "Moving..."
+fi
+
+
+
+qsub -pe linux_smp $NCPUS -N $JOBNAME -j y -o ~/Jobs -hold_jid $HOLD  << EOF
+
+cd "$PWD"
+
+namd2 $JOBNAME.inp >! $JOBNAME.log
+EOF

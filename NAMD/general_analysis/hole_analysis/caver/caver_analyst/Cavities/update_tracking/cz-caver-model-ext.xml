@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?><module codename="cz.caver.model.ext">
+    <module_version install_time="1405966314818" last="true" origin="installer" specification_version="1.0">
+        <file crc="1275864129" name="config/Modules/cz-caver-model-ext.xml"/>
+        <file crc="2782567899" name="modules/cz-caver-model-ext.jar"/>
+    </module_version>
+</module>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?><module codename="cz.caver.cavities.measure.approx_volume">
+    <module_version install_time="1405966332248" last="true" origin="installer" specification_version="1.0.1">
+        <file crc="76144067" name="config/Modules/cz-caver-cavities-measure-approx_volume.xml"/>
+        <file crc="1222720295" name="modules/cz-caver-cavities-measure-approx_volume.jar"/>
+    </module_version>
+</module>

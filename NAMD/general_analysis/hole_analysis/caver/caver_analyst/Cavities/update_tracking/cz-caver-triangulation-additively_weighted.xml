@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?><module codename="cz.caver.triangulation.additively_weighted">
+    <module_version install_time="1405966317267" last="true" origin="installer" specification_version="1.0">
+        <file crc="3757856298" name="config/Modules/cz-caver-triangulation-additively_weighted.xml"/>
+        <file crc="2098221345" name="modules/cz-caver-triangulation-additively_weighted.jar"/>
+        <file crc="2169599136" name="modules/ext/awvoronoi-1.0.1.jar"/>
+        <file crc="1057420993" name="modules/ext/caver-delaunay-factory-1.0.4.jar"/>
+        <file crc="595457092" name="modules/ext/caver-qhull-3.0_beta4.jar"/>
+        <file crc="999693809" name="modules/ext/delaunay-cell-discovery-1.0.1.jar"/>
+    </module_version>
+</module>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?><module codename="cz.caver.externallibraries">
+    <module_version install_time="1405968101437" last="true" origin="installer" specification_version="1.0">
+        <file crc="2055835152" name="config/Modules/cz-caver-externallibraries.xml"/>
+        <file crc="3480885986" name="modules/cz-caver-externallibraries.jar"/>
+        <file crc="3348821032" name="modules/ext/gluegen-rt-natives-linux-amd64.jar"/>
+        <file crc="947732323" name="modules/ext/gluegen-rt.jar"/>
+        <file crc="2286775712" name="modules/ext/gluegen.jar"/>
+        <file crc="2935641688" name="modules/ext/jogl-all-natives-linux-amd64.jar"/>
+        <file crc="1564649505" name="modules/ext/jogl.all-mobile.jar"/>
+        <file crc="1704796109" name="modules/ext/jogl.all-noawt.jar"/>
+        <file crc="3486126606" name="modules/ext/jogl.all.jar"/>
+        <file crc="3130543663" name="modules/ext/jogl.test.jar"/>
+        <file crc="3787775642" name="modules/ext/lib_linux_x64.jar"/>
+        <file crc="1136482792" name="modules/ext/newt.event.jar"/>
+        <file crc="1018631404" name="modules/ext/xuggle-xuggler-arch-x86_64-pc-linux-gnu.jar"/>
+        <file crc="3773445486" name="modules/ext/xuggle-xuggler-noarch-5.4.jar"/>
+        <file crc="3147023489" name="modules/lib/libgluegen-rt.so"/>
+        <file crc="1439072881" name="modules/lib/libjoal.so"/>
+        <file crc="1205296673" name="modules/lib/libjocl.so"/>
+        <file crc="4096557245" name="modules/lib/libjogl_desktop.so"/>
+        <file crc="162989847" name="modules/lib/libjogl_mobile.so"/>
+        <file crc="3307710992" name="modules/lib/libnativewindow_awt.so"/>
+        <file crc="803025194" name="modules/lib/libnativewindow_x11.so"/>
+        <file crc="1620177714" name="modules/lib/libnewt.so"/>
+    </module_version>
+</module>

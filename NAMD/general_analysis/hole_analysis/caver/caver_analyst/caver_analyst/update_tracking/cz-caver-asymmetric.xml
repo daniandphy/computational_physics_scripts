@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?><module codename="cz.caver.asymmetric">
+    <module_version install_time="1405968115407" last="true" origin="installer" specification_version="1.0">
+        <file crc="2425400211" name="config/Modules/cz-caver-asymmetric.xml"/>
+        <file crc="1571197993" name="modules/cz-caver-asymmetric.jar"/>
+        <file crc="2621656446" name="modules/ext/commons-lang3-3.1.jar"/>
+        <file crc="282453412" name="modules/ext/jhealpix_compat.jar"/>
+    </module_version>
+</module>

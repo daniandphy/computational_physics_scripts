@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?><module codename="org.netbeans.modules.autoupdate.cli">
+    <module_version install_time="1370463506458" last="true" origin="installer" specification_version="1.3.1">
+        <file crc="1140292232" name="config/Modules/org-netbeans-modules-autoupdate-cli.xml"/>
+        <file crc="2230829286" name="modules/locale/org-netbeans-modules-autoupdate-cli_ja.jar"/>
+        <file crc="2613946767" name="modules/locale/org-netbeans-modules-autoupdate-cli_pt_BR.jar"/>
+        <file crc="2933797952" name="modules/locale/org-netbeans-modules-autoupdate-cli_ru.jar"/>
+        <file crc="1524167426" name="modules/locale/org-netbeans-modules-autoupdate-cli_zh_CN.jar"/>
+        <file crc="851349895" name="modules/org-netbeans-modules-autoupdate-cli.jar"/>
+    </module_version>
+</module>

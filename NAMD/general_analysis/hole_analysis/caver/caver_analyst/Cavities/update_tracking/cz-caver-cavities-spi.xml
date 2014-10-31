@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?><module codename="cz.caver.cavities.spi">
+    <module_version install_time="1405966339237" last="true" origin="installer" specification_version="1.0.2">
+        <file crc="691880468" name="config/Modules/cz-caver-cavities-spi.xml"/>
+        <file crc="3679709936" name="modules/cz-caver-cavities-spi.jar"/>
+    </module_version>
+</module>

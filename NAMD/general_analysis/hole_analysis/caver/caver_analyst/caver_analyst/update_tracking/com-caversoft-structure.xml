@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?><module codename="com.caversoft.structure">
+    <module_version install_time="1405968105740" last="true" origin="installer" specification_version="1.0">
+        <file crc="4186655489" name="config/Modules/com-caversoft-structure.xml"/>
+        <file crc="1986897794" name="modules/com-caversoft-structure.jar"/>
+        <file crc="964851370" name="modules/ext/aopalliance.jar"/>
+        <file crc="3905088850" name="modules/ext/commons-codec.jar"/>
+        <file crc="259077428" name="modules/ext/commons-httpclient.jar"/>
+        <file crc="3077296198" name="modules/ext/commons-logging.jar"/>
+        <file crc="2197124025" name="modules/ext/log4j.jar"/>
+        <file crc="3655187133" name="modules/ext/spring.aop.jar"/>
+        <file crc="2222644125" name="modules/ext/spring.beans.jar"/>
+        <file crc="1931189238" name="modules/ext/spring.context.jar"/>
+        <file crc="3285175607" name="modules/ext/spring.core.jar"/>
+        <file crc="2419969003" name="modules/ext/spring.web.jar"/>
+        <file crc="1605659889" name="modules/ext/uniprotjapi.jar"/>
+    </module_version>
+</module>

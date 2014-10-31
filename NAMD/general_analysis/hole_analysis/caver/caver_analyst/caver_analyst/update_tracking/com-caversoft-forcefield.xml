@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?><module codename="com.caversoft.forcefield">
+    <module_version install_time="1405968099409" last="true" origin="installer" specification_version="1.0">
+        <file crc="3087103236" name="config/Modules/com-caversoft-forcefield.xml"/>
+        <file crc="1963933623" name="modules/com-caversoft-forcefield.jar"/>
+    </module_version>
+</module>

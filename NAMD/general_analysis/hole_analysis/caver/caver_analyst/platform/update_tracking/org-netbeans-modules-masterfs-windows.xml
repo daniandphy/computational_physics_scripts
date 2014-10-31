@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?><module codename="org.netbeans.modules.masterfs.windows">
+    <module_version install_time="1370463277378" last="true" origin="installer" specification_version="1.4.1">
+        <file crc="2941073432" name="config/Modules/org-netbeans-modules-masterfs-windows.xml"/>
+        <file crc="2999334130" name="modules/locale/org-netbeans-modules-masterfs-windows_ja.jar"/>
+        <file crc="1779504724" name="modules/locale/org-netbeans-modules-masterfs-windows_pt_BR.jar"/>
+        <file crc="319235526" name="modules/locale/org-netbeans-modules-masterfs-windows_ru.jar"/>
+        <file crc="1617170519" name="modules/locale/org-netbeans-modules-masterfs-windows_zh_CN.jar"/>
+        <file crc="67723623" name="modules/org-netbeans-modules-masterfs-windows.jar"/>
+    </module_version>
+</module>

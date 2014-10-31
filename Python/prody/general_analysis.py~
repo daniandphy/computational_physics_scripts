@@ -1,0 +1,44 @@
+from prody import *
+from pylab import *
+ion()
+
+DCD_file="/Scr/danial/DAT/apo/general_analysis_1/all_traj_apo1.dcd"
+PDB_file="/Scr/danial/DAT/apo/build_1/step5_assembly.pdb"
+
+structure = parsePDB(PDB_file)
+traj = Trajectory(DCD_file)
+###traj.addFile(DCD_file2)
+traj.link(structure)
+traj.setAtoms(structure)
+traj.setCoords(structure)
+
+nf=traj.numFrames()
+start=0
+stop=nf
+step=1
+#####This operation set the coordinates of the structure as the reference coordinates of the ensemble. Now we can Ensemble.superpose() the ensemble onto the coordinates of the structure.
+
+array_size=(stop-start)//step
+rgyr = zeros(array_size)
+rmsd = zeros(array_size)
+
+selection="protein and name CA"
+coord_sel=structure.select(selection)
+
+for i, frame in enumerate(traj):
+	rgyr[i] = calcGyradius(coord_sel)
+	frame.superpose()
+	rmsd[i] = frame.getRMSD()
+
+
+plot(rgyr)
+xlabel('Frame index');
+
+ylabel('End-to-end distance (A)');
+savefig('rgyr.eps',format='eps')
+
+plot(rgyr)
+xlabel('Frame index');
+
+ylabel('RMSD (A)');
+savefig('rmsd.eps',format='eps')

@@ -1,0 +1,5 @@
+import sys
+sys.path.append('/home/danial/script/python_script/prody')
+from prody import *
+import numpy as np
+import matplotlib.pyplot as plt

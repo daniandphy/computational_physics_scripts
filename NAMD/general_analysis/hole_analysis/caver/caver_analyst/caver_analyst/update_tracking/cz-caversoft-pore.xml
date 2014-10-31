@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?><module codename="cz.caversoft.pore">
+    <module_version install_time="1405968122850" last="true" origin="installer" specification_version="1.0">
+        <file crc="3840667851" name="config/Modules/cz-caversoft-pore.xml"/>
+        <file crc="1993700034" name="modules/cz-caversoft-pore.jar"/>
+    </module_version>
+</module>

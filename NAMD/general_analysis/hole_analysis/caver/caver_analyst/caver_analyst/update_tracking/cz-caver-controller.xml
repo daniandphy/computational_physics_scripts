@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?><module codename="cz.caver.controller">
+    <module_version install_time="1405968112276" last="true" origin="installer" specification_version="1.0">
+        <file crc="474050535" name="config/Modules/cz-caver-controller.xml"/>
+        <file crc="913163417" name="modules/cz-caver-controller.jar"/>
+    </module_version>
+</module>

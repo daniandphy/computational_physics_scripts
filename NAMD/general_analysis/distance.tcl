@@ -1,0 +1,45 @@
+
+set name "namexxx"
+set PSF  "psfxxx"
+set DCD  "dcdxxx"
+set SEL1  "sel1xxx"
+set SEL2  "sel2xxx"
+set START "startxxx"
+set STOP "stopxxx"
+set STEP "stepxxx"
+
+set mol [mol new $PSF type psf]
+mol addfile  $DCD  type dcd first 0 last -1 step 1 filebonds 1 autobonds 1 waitfor all
+
+set sel1 [atomselect $mol $SEL1]
+set sel2 [atomselect $mol $SEL2]
+
+##############################
+ 
+if {$START == "startxxx"} {
+set START 0
+}
+if {$STOP == "stopxxx" || $STOP == -1} {
+set STOP [molinfo $mol get numframes]
+}
+if {$STEP == "stepxxx" || $STEP== ""} {
+set STEP 1
+}
+
+#####################################
+
+set outfile [open dist_${name}.out w]
+
+
+for {set i $START} { $i <$STOP} {incr i $STEP} {
+$sel1 frame $i
+$sel2 frame $i
+#set com1 [measure center $sel1 weight mass]
+#set com2 [measure center $sel2 weight mass]
+set com1 [measure center $sel1]
+set com2 [measure center $sel2]
+set simdata($i.r) [veclength [vecsub $com1 $com2]]
+puts $outfile "$i \t $simdata($i.r)"
+}
+close $outfile 
+exit

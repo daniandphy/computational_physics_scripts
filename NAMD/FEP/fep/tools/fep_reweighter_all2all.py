@@ -1,0 +1,189 @@
+#!/home/jvermaas/Python/bin/python
+import math,sys,re,os
+import numpy as np
+kcal_kt_ene= 0.593*310.00/300.00
+beta=1.0/kcal_kt_ene
+penergies_l=[]
+benergies_l=[]
+win_l=[]
+log_weights_l=[]
+
+def printusage():
+ #import sys
+ #print ' one input file per line in list  \n'
+ print 'USAGE: -pebwf \'list of unbiased potential energy files + list of bias energy files + list of windows  \' -wl \'win length (snapshots)\' -wr win_range -o \'output format\'  '
+ sys.exit()
+def read_list_of_input(inputs_list):
+    ## this function read the list of potential, bias, windows files
+    global penergies_l,benergies_l,win_l
+
+    inp_files_list=open(inputs_list, "r")
+    for line in inp_files_list:
+      COMMENT_LINE=re.match(r'^#',line)
+      if not COMMENT_LINE:  
+	temp_penergies_f,temp_benergies_f,temp_wins_f=line.split()
+	penergies_l.append(read_data_file(temp_penergies_f))
+	benergies_l.append(read_data_file(temp_benergies_f))
+	win_l.append(read_data_file(temp_wins_f))
+
+
+
+###########
+def read_data_file(input):
+    ##this function receive the name of the file and then return  a list
+    #data_file = open(input, "r")
+    #for lines in data_file:
+    with open(input, "r") as f:
+	my_list=[line.split() for line in f]
+
+    return np.array(my_list,dtype=float)
+	
+
+#####
+def build_log_weights_wrapper(win_length):
+    global penergies_l,benergies_l,win_l,log_weights_l
+    for i in range(len(penergies_l)):
+	log_weights_l.append(build_log_weights(penergies_l[i],benergies_l[i],win_l[i],win_length))
+
+
+def build_log_weights(penergies,benergies,wins,win_length):
+      global beta
+      log_weights=np.zeros(len(penergies))
+      print "range(len(wins))",range(len(wins))
+      for i in range(len(wins)):
+	begin=i*win_length
+	end=begin+win_length
+	#temp=penergies[begin:end,i]
+	#print begin,end, penergies[begin:end,i].shape,benergies[begin:end].shape,temp.shape,(penergies[begin:end,i]+benergies[begin:end].squeeze()).shape
+        #print "penergies[begin,i]+benergies[begin,0]",penergies[begin,i],benergies[begin,0]
+	log_weights[begin:end]=penergies[begin:end,i]+benergies[begin:end,0]
+	#print log_weights[begin],penergies[begin,i],benergies[begin,0],i,begin,benergies.shape,(np.array(np.where(log_weights==0))).shape
+	print begin,end
+      return log_weights
+###########
+def free_enegy_diff(fetype,win_range,win_length):
+    global penergies_l,benergies_l,win_l,log_weights_l,beta
+    free_energy_l=[]
+    free_energy_win_l=[]
+    if fetype=='fwd':
+	start=0.0
+	stop=1.0
+	dlambda=abs(win_l[0][0]-win_l[0][1])[0]
+    else:
+	start=1.0
+	stop=0.0
+	dlambda=-abs(win_l[0][0]-win_l[0][1])[0]
+    i=0
+    while start != stop:
+	print "start ",start
+        FE_temp=0.0
+	Weight_sum_temp=0.0
+	free_energy_win_l.append(start)
+	#print "win_l",win_l
+	#print type(win_l[1])
+    	for j in range(len(win_l)):
+	    print "j:",j,np.where(win_l[j]==start+dlambda),start+dlambda,np.where(win_l[j]==start),dlambda
+	    col1=np.where(win_l[j]==start)[0][0]
+	    col2=col1+1#np.where(win_l[j]==start+dlambda)[0][0]
+	    lindex,hindex=index_range_calculator(win_range,col1,win_l[j])
+            lindex,hindex=lindex*win_length,hindex*win_length
+            print("col1",col1,lindex,hindex)
+	    #print "col1,col2",col1,col2
+	    #print "type(penergies_l[j])",type(penergies_l[j])
+	    temp=-beta*(penergies_l[j][lindex:hindex,col2]-penergies_l[j][lindex:hindex,col1]+penergies_l[j][lindex:hindex,col1]-log_weights_l[j][lindex:hindex])
+	    #print "max(temp)",max(temp),"np.where(temp==max(temp))[0][0]",np.where(temp==max(temp))[0][0]
+	    #print "max(-beta*(penergies_l[j][:,col2]-penergies_l[j][:,col1]+penergies_l[j][:,col1]))",max(-beta*(penergies_l[j][:,col2]-penergies_l[j][:,col1]+penergies_l[j][:,col1]))
+	    #print "max(log_weights_l[j])",max(log_weights_l[j].squeeze())
+	    #print "log_weights_l[j][2997:3000]",log_weights_l[j].squeeze()[2997:3000]
+	    #print "-beta*(penergies_l[j][:,col2]-penergies_l[j][:,col1]+penergies_l[j][:,col1])[3999]",-beta*(penergies_l[j][:,col2]-penergies_l[j][:,col1]+penergies_l[j][:,col1])[3999]
+	    ####debug
+	    weight=-beta*(penergies_l[j][lindex:hindex,col1]-log_weights_l[j][lindex:hindex])
+	    max_test=np.max(weight)
+	    max_index=np.where(weight==max_test)[0][0]
+	    
+	    print "weight test:", max_index ,max_test ,"penergies_l[j][max_index,col1]",penergies_l[j][max_index,col1],"log weight",-log_weights_l[j][max_index]
+            print j,col1,col2," free_e_diff_test",temp[max_index],penergies_l[0][max_index,col2],penergies_l[0][max_index,col2]-penergies_l[0][max_index,col1]-benergies_l[0][max_index]
+	    
+            
+            FE_temp+=np.sum(np.exp(temp))
+	    #print "FE_temp",FE_temp
+	    Weight_sum_temp +=np.sum(np.exp(weight))
+	
+	###debug
+	#begin=i*win_length
+	#end=begin+1*win_length
+	#i+=1
+	#Weight_sum_temp =np.sum(np.exp(-beta*(penergies_l[j][begin:end,col1]-log_weights_l[j][begin:end])))
+	#temp=-beta*(penergies_l[j][begin:end,col2]-penergies_l[j][begin:end,col1]+penergies_l[j][begin:end,col1]-log_weights_l[j][begin:end])
+	#FE_temp+=np.sum(np.exp(temp))
+	####endofdebug
+	free_energy_l.append(-1.0/beta * np.log(FE_temp/Weight_sum_temp))
+	start+=dlambda
+	
+
+    return np.array(free_energy_win_l),np.array(free_energy_l)
+
+#################
+def index_range_calculator(win_range,my_win_ind,win_arr):
+	tot_wins=len(win_arr)
+	
+        
+        if my_win_ind -(win_range//2) <0:
+		range_overload=abs(my_win_ind -(win_range//2))
+		return 0,range_overload+(win_range//2)+my_win_ind
+	elif my_win_ind+(win_range//2)>(tot_wins-1):
+		range_overload= my_win_ind+(win_range//2)-(tot_wins-1)
+		return my_win_ind-(range_overload+(win_range//2)),tot_wins-1
+	else:
+		return my_win_ind-(win_range//2),my_win_ind+(win_range//2)
+	
+
+
+############### exp_sum
+def effective_sum(vec):
+	temp=vec[0]
+	for i in range(len(vec)-1):
+	    temp=exp_sum(temp,vec[i+1])
+	    #print exp(temp),vec[i+1]
+	print "exp sum temp: ", temp
+	return np.exp(temp)
+
+def exp_sum(a,b):
+    #this function receive a,b and give you c=log(exp(a)+exp(b)), it is usfule for free energy calculations
+    #pdb.set_trace()
+    return np.float64(max(a,b)+np.log(1+np.exp(min(a,b)-max(a,b))))
+    #c=max(log(a),log(b))+log(1+exp(min(log(a),log(b))-max(log(a),log(b))))
+
+
+
+##########################################################################################################################################
+if len(sys.argv)==1 or sys.argv[1].startswith('-h') or  sys.argv[1].startswith('--h'):
+ printusage()
+ exit()
+for x in range (len(sys.argv)):
+ if sys.argv[x] == '-pebwf':
+      pebwf_list_file=sys.argv[x+1]
+ if sys.argv[x] == '-wl':
+      win_length=int(sys.argv[x+1])
+ if sys.argv[x] == '-o':
+      output_format=sys.argv[x+1]
+ if sys.argv[x] == '-wr':
+      win_range=int(sys.argv[x+1])
+
+
+read_list_of_input(pebwf_list_file)
+build_log_weights_wrapper(win_length)
+print "build_log_weights_wrapper is done"
+#fwd_wins,fwd_free_energy=free_enegy_diff('fwd',win_range,win_length)
+bwd_wins,bwd_free_energy=free_enegy_diff('bwd',win_range,win_length)
+
+
+#fwd_cum_fe_diff_file=open('fwd_cum_fe_diff_'+output_format+'.out',"w")
+#for i in range(len(fwd_wins)):
+#  fwd_cum_fe_diff_file.write(str(fwd_wins[i])+'\t'+str(fwd_free_energy[i])+'\t'+str(np.sum(fwd_free_energy[0:i+1]))+'\n')
+#fwd_cum_fe_diff_file.close()
+
+bwd_cum_fe_diff_file=open('bwd_cum_fe_diff_'+output_format+'.out',"w")
+for i in range(len(bwd_wins)):
+  bwd_cum_fe_diff_file.write(str(bwd_wins[i])+'\t'+str(bwd_free_energy[i])+'\t'+str(np.sum(bwd_free_energy[0:i]))+'\n')
+bwd_cum_fe_diff_file.close()

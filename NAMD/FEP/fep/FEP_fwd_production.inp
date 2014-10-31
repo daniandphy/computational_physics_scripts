@@ -1,0 +1,159 @@
+source ../build/name_and_selection.tcl
+
+structure          ../build/$name.psf
+coordinates        ../build/$name.pdb
+
+
+set temp           310;
+set fepoutform FEP_fwd
+outputName         $fepoutform; # base name for output from this run
+                                       # NAMD writes two files at the end, final coord and vel
+                                       # in the format of first-dyn.coor and first-dyn.vel
+
+set inputname      ../build/namd/step6.6_equilibration;
+binCoordinates     $inputname.coor;    # coordinates from last run (binary)
+binVelocities      $inputname.vel;     # velocities from last run (binary)
+extendedSystem     $inputname.xsc;     # cell dimensions from last run (binary)
+restartfreq        500;                # 500 steps = every 1ps
+dcdfreq           500;
+dcdUnitCell        yes;                # the file will contain unit cell info in the style of
+                                       # charmm dcd files. if yes, the dcd files will contain
+                                       # unit cell information in the style of charmm DCD files.
+xstFreq            500;                # XSTFreq: control how often the extended systen configuration
+                                       # will be appended to the XST file
+outputEnergies     100;                # 100 steps = every 0.2ps
+                                       # The number of timesteps between each energy output of NAMD
+outputTiming       500;                # The number of timesteps between each timing output shows
+                                       # time per step and time to completion
+
+# Force-Field Parameters
+paraTypeCharmm     on;                 # We're using charmm type parameter file(s)
+                                       # multiple definitions may be used but only one file per definition
+parameters         toppar/par_all36_prot.prm;
+parameters         toppar/par_all36_na.prm;
+parameters         toppar/par_all36_carb.prm;
+parameters         toppar/par_all36_lipid.prm;
+parameters         toppar/par_all36_cgenff.prm;
+parameters         toppar/toppar_water_ions.str;
+parameters         toppar/toppar_all36_lipid_cholesterol.str;
+# extra lipids
+parameters         toppar/toppar_all36_carb_glycolipid.str;
+parameters         toppar/toppar_all36_lipid_bacterial.str;
+
+
+# PME (for full-system periodic electrostatics)
+source ../build/namd/checkfft.str
+
+PME                yes;
+PMEInterpOrder       6;                # interpolation order (spline order 6 in charmm)
+PMEGridSizeX     $fftx;                # should be close to the cell size 
+PMEGridSizeY     $ffty;                # corresponds to the charmm input fftx/y/z
+PMEGridSizeZ     $fftz;
+
+
+
+# MD SETUP
+
+timestep                2.0
+##numsteps                1 
+
+
+# FLEXIBLE CELL
+
+useflexiblecell         no
+
+
+# WRAP WATER FOR OUTPUT
+
+wrapAll                 on
+
+
+# CONSTANT-T
+
+langevin                on
+langevinTemp            $temp
+langevinDamping         1.0
+
+
+# CONSTANT-P
+
+LangevinPiston          on
+LangevinPistonTarget    1
+LangevinPistonPeriod    75
+LangevinPistonDecay     25
+LangevinPistonTemp      $temp
+StrainRate              0.0 0.0 0.0
+useGroupPressure        yes
+
+
+# SPACE PARTITIONING
+
+splitpatch              hydrogen
+hgroupcutoff            2.8
+stepspercycle           10
+margin                  1.0
+
+
+# CUT-OFFS
+
+switching               on
+switchdist               9.0
+cutoff                  10.0
+pairlistdist            11.0
+limitDist                1.3
+
+
+# RESPA 
+
+fullElectFrequency      2
+nonbondedFreq           1
+
+
+# 1-4 NON-BONDED
+
+exclude                 scaled1-4
+1-4scaling              1.0
+
+
+# COM
+
+commotion               no
+
+
+# SHAKE
+
+rigidbonds              all
+rigidtolerance          0.000001
+rigiditerations         400
+
+
+########
+colvars on
+colvarsConfig $name.colvar.in
+
+
+##FEP part
+
+#exec vmd -dispdev text -e tools/fep_file_maker.tcl > vmd.log
+
+source tools/fep.tcl
+alch on
+alchType FEP
+alchFile $name.fep.pdb
+alchCol B
+alchOutFile $name.$fepoutform.fepout
+alchOutFreq 10
+
+alchElecLambdaStart     0.1
+alchVdwLambdaEnd        1.0
+alchVdwShiftCoeff       5.0
+alchdecouple            on
+
+alchEquilSteps          1000
+set numSteps            250000
+
+set dLambda             0.03125
+
+runFEP 0.0 1.0 $dLambda $numSteps
+
+

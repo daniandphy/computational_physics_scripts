@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?><module codename="com.caversoft.loader">
+    <module_version install_time="1405968110664" last="true" origin="installer" specification_version="1.0">
+        <file crc="2393274041" name="config/Modules/com-caversoft-loader.xml"/>
+        <file crc="2272651107" name="modules/com-caversoft-loader.jar"/>
+    </module_version>
+</module>

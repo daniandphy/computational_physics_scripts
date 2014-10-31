@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?><module codename="com.caversoft.tunnel">
+    <module_version install_time="1405968109277" last="true" origin="installer" specification_version="1.0">
+        <file crc="7592010" name="config/Modules/com-caversoft-tunnel.xml"/>
+        <file crc="2155718976" name="modules/com-caversoft-tunnel.jar"/>
+    </module_version>
+</module>

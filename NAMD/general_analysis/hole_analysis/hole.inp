@@ -1,0 +1,30 @@
+! CARDS which MUST be specified:
+
+COORD pdbxxx !filename
+RADIUS ~/software/hole/hole/hole2/rad/simple.rad!filename
+
+
+! CARDS which may be specified
+
+CPOINT   cpointxxx !x y z (where x y and z are real numbers - separated by spaces)
+CVECT 0 0 1!x y z (where x y and z are real numbers - separated by spaces)
+SPHPDB hole_outputxxx.sph!filename
+ENDRAD 50!real number
+CONN !or options can be set by: CONN Rprobe or CONN Rprobe Dconn
+SAMPLE 0.25
+!#IGNORE !list_of_3_character_residue_types
+
+
+! Other CARDS:
+
+!#SHORTO (optional integer)
+!#SAMPLE real_number
+!#MCDISP real_number
+!#MCKT real_number
+!#MCSTEP integer
+!#RASEED integer
+!#CHARMD filename
+!#CHARMS integer integer
+!#2DMAPS filename_root
+!#CAPSULE
+

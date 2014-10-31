@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?><module codename="cz.caver.video">
+    <module_version install_time="1405968103515" last="true" origin="installer" specification_version="1.0">
+        <file crc="1504398944" name="config/Modules/cz-caver-video.xml"/>
+        <file crc="1725056647" name="modules/cz-caver-video.jar"/>
+    </module_version>
+</module>

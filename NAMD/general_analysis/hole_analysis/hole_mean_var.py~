@@ -1,0 +1,99 @@
+#!/usr/local/bin/python
+import numpy as np
+import math,sys,pdb,time,re,os,copy
+
+sys.path.append('/home/danial/script/python_script/prody')
+import bio_plot_library as bpl
+###############################functions
+def printusage():
+ #import sys
+ print ' one input file per line in list  \n'
+ print 'USAGE: -il list of input -o output -omv mean_var_output -pl "plot_label"'
+ sys.exit()
+
+def read_data_file(input):
+    ##this function receive the name of the file and then return  a list
+    data_file = open(input, "r")
+    data_list=[]
+    
+    for line in data_file:
+     data_line=map(float,line.split())
+     data_list.append(data_line)
+    return zip(*data_list)
+    
+def find_common_range(all_data_list):
+    upper_limits=[]
+    lower_limits=[]
+    for i in range(len(all_data_list)):
+	upper_limits.append(all_data_list[i][0][-1])
+        lower_limits.append(all_data_list[i][0][0])
+    #print upper_limits
+    #print lower_limits
+    return min(upper_limits),max(lower_limits)
+
+def data_liner_out(all_data_list,common_range):
+
+    equi_all_data_list=[]
+    
+    for i in range(len(all_data_list)):
+	temp_list=all_data_list[i]
+        lower_index=list(temp_list[0]).index(common_range[1])
+        upper_index=list(temp_list[0]).index(common_range[0])
+        if i==0:
+	  common_range_list=temp_list[0][lower_index:upper_index]
+	  equi_all_data_list.append(temp_list[1][lower_index:upper_index])
+        else:
+          equi_all_data_list.append(temp_list[1][lower_index:upper_index])
+
+    return np.array(equi_all_data_list).transpose(),np.array(common_range_list)
+####################################main program
+if len(sys.argv)==1 or sys.argv[1].startswith('-h') or  sys.argv[1].startswith('--h'):
+ printusage()
+for x in range (len(sys.argv)):
+ if sys.argv[x] == '-il':
+      i_list=sys.argv[x+1]
+ if sys.argv[x] == '-o':
+      output=sys.argv[x+1]
+ if sys.argv[x] == '-omv':
+      output2=sys.argv[x+1]
+ if sys.argv[x] == '-pl':
+      plot_label=sys.argv[x+1]
+outf=open(output,"w")
+inp_list=open(i_list,'r')
+bash_command="wc "+ i_list+"| awk '{print $1}'"
+number_of_inp=os.popen(bash_command)
+number_of_inp=int(number_of_inp.read())
+i=0
+all_data_list=[]
+for line in inp_list:
+    i+=1
+    inp_file=line.split()[0]
+    
+    print 'input file:',inp_file
+    inp_file=re.sub(r'\s+','',inp_file)#substitute the character like "\n" etc. with nothing (i.e., removing those)  
+    all_data_list.append(read_data_file(inp_file)) ##making list of lists
+#print all_data_list[0][0][0],all_data_list[0][0][-1]
+print len(all_data_list)
+common_range=find_common_range(all_data_list)
+#print common_range
+equi_all_data_array,common_range_array=data_liner_out(all_data_list,common_range)
+number_of_rows=np.shape(equi_all_data_array)[0]
+
+
+for i in range(0,number_of_rows):
+    outf.write(str(common_range_array[i])+'  '+'  '.join(str(elem) for elem in equi_all_data_array[i,:])+'\n')
+
+
+outf2=open(output2,"w")
+pore_mean=np.mean(equi_all_data_array,axis=1)
+pore_std=np.std(equi_all_data_array,axis=1)
+for i in range (0,number_of_rows):
+    outf2.write(str(common_range_array[i])+'\t'+str(pore_mean[i])+'\t'+str(pore_std[i])+'\n')
+
+####plotting
+XYYerr=[common_range_array,pore_mean,pore_std]
+XYYerr=np.array(XYYerr).T
+print("XYYerr.shape",XYYerr.shape,pore_mean.shape)
+bpl.plotXY([XYYerr],yerr=True,\
+out_name=output2+'.pdf',title='',xlabel=r'Z($\AA$)',ylabel=r'Radius($\AA$)'\
+,labels=[plot_label])

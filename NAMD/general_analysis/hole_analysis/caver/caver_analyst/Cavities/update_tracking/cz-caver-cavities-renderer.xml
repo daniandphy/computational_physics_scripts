@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?><module codename="cz.caver.cavities.renderer">
+    <module_version install_time="1405966324178" last="true" origin="installer" specification_version="1.0.1">
+        <file crc="1134972107" name="config/Modules/cz-caver-cavities-renderer.xml"/>
+        <file crc="3555511655" name="modules/cz-caver-cavities-renderer.jar"/>
+    </module_version>
+</module>

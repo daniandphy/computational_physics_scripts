@@ -1,0 +1,89 @@
+name_format="apo_chol"
+
+dcdfile="/Scr/danial/DAT/apo_cholesterol/general_analysis_1/all_traj_apo_ch1.dcd"
+pdbfile="/Scr/danial/DAT/apo_cholesterol/build_1/4m48_wild_apo_cholesterol_popc_nowat_sod.pdb"
+
+
+library(bio3d)
+
+dcd <- read.dcd(dcdfile)
+pdb <- read.pdb(pdbfile)
+
+
+
+ca.inds <- atom.select(pdb, elety = "CA")
+
+####align by CA
+
+xyz <- fit.xyz(fixed = pdb$xyz, mobile = dcd, fixed.inds = ca.inds$xyz, mobile.inds = ca.inds$xyz)
+
+#################
+
+####RMSD
+postscript(file=paste(name_format,".RMSD.eps",sep=""))
+
+rd <- rmsd(xyz[1, ca.inds$xyz], xyz[, ca.inds$xyz])
+
+plot(rd, typ = "l", ylab = "RMSD", xlab = "Frame No.")
+points(lowess(rd), typ = "l", col = "red", lty = 2, lwd = 2)
+dev.off()
+
+###RMSD distribution
+postscript(file=paste(name_format,".RMSD_dist.eps",sep=""))
+
+hist(rd, breaks = 40, freq = FALSE, main = "RMSD Histogram", xlab = "RMSD")
+lines(density(rd), col = "gray", lwd = 3)
+
+dev.off()
+###RMSF
+postscript(file=paste(name_format,".RMSF.eps",sep=""))
+
+rf <- rmsf(xyz[, ca.inds$xyz])
+plot(rf, ylab = "RMSF", xlab = "Residue Position", typ = "l")
+
+dev.off()
+#################################################
+
+################################################PCA
+postscript(file=paste(name_format,".PCA.eps"))
+
+pc <- pca.xyz(xyz[, ca.inds$xyz])
+plot(pc, col = bwr.colors(nrow(xyz)))
+
+dev.off()
+#####
+
+postscript(file=paste(name_format,".PCA_cluster.eps",sep=""))
+
+hc <- hclust(dist(pc$z[, 1:2]))
+grps <- cutree(hc, k = 2)
+plot(pc, col = grps)
+dev.off()
+
+#### pca contribution per residue
+
+postscript(file=paste(name_format,".PCA_contribution.eps",sep=""))
+
+plot.bio3d(pc$au[, 1], ylab = "PC1 (A)", xlab = "Residue Position", typ = "l")
+points(pc$au[, 2], typ = "l", col = "blue")
+dev.off()
+
+#### pca trajectory
+
+p1 <- mktrj.pca(pc, pc = 1, b = pc$au[, 1], file = "pc1.pdb")
+p2 <- mktrj.pca(pc, pc = 2, b = pc$au[, 2], file = "pc2.pdb")
+
+write.pdb(p1,paste(name_format,".PCA_1_trj.pdb",sep=""))
+write.pdb(p2,paste(name_format,".PCA_2_trj.pdb",sep=""))
+
+
+##############################################################
+###########################cross_correlation analysis
+
+postscript(file=paste(name_format,".CCA.eps",sep=""))
+
+cij <- dccm(xyz[, ca.inds$xyz])
+
+plot(cij)
+
+dev.off()

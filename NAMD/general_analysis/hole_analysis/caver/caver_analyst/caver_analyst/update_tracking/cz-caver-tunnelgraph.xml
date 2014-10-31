@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?><module codename="cz.caver.tunnelgraph">
+    <module_version install_time="1405968116861" last="true" origin="installer" specification_version="1.0">
+        <file crc="1689739014" name="config/Modules/cz-caver-tunnelgraph.xml"/>
+        <file crc="1334353594" name="modules/cz-caver-tunnelgraph.jar"/>
+        <file crc="2104396249" name="modules/ext/jcommon-1.0.16.jar"/>
+        <file crc="3786224260" name="modules/ext/jcommon-license.txt"/>
+        <file crc="2418921896" name="modules/ext/jfreechart-1.0.13.jar"/>
+        <file crc="3786224260" name="modules/ext/jfreechart-license.txt"/>
+    </module_version>
+</module>

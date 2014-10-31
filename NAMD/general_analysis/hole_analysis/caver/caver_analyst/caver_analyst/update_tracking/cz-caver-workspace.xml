@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?><module codename="cz.caver.workspace">
+    <module_version install_time="1405968104569" last="true" origin="installer" specification_version="1.0">
+        <file crc="1683424681" name="config/Modules/cz-caver-workspace.xml"/>
+        <file crc="2401701754" name="modules/cz-caver-workspace.jar"/>
+    </module_version>
+</module>

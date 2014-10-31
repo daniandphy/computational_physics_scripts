@@ -1,0 +1,139 @@
+set name "namexxx"
+set PSF "psfxxx"
+set REF_PDB "ref_pdbxxx"
+set DCD all_traj_$name.dcd
+
+
+puts "name is $name"
+puts "psf is: $PSF"
+puts "ref pdb is: $REF_PDB"
+
+
+set file_rmsd_CA [open "rmsd_CA_$name.dat" w]
+set file_rmsd_BP [open "rmsd_BP_$name.dat" w]
+set file_rmsf_CA [open "rmsf_CA_$name.dat" w]
+set file_rmsf_BP [open "rmsf_BP_$name.dat" w]
+set file_rmsf_pro [open "rmsf_pro_$name.dat" w]
+
+
+
+set mol_ref [mol new $REF_PDB type pdb] 
+set mol [mol new $PSF type psf]
+mol addfile $DCD type dcd first 0 last -1 step 1 filebonds 1 autobonds 1 waitfor all
+
+set ref_protein [atomselect $mol_ref "protein and noh"]
+
+set sel_protein [atomselect $mol "protein and noh"]
+#set all [atomselect $mol all]
+set ref_CA [atomselect $mol_ref "name CA" ]
+set sel_CA [atomselect $mol "name CA"]
+set ref_BP [atomselect $mol_ref "protein and noh and (resid 46 49 352 320 44 316 69 356 420 421 42 45 417)"]
+set sel_BP [atomselect $mol "protein and noh and (resid 46 49 352 320 44 316 69 356 420 421 42 45 417)"]
+#set sel_ion
+set nf [molinfo $mol get numframes]
+#puts $nf
+# rmsd calculation loop
+for { set i 1 } { $i <= $nf } { incr i } {
+	$sel_protein frame $i
+	$sel_CA frame $i
+	$sel_BP frame $i
+        set transformation_mat [measure fit $sel_protein $ref_protein]
+	$sel_CA move transformation_mat
+        $sel_BP move transformation_mat
+	puts $file_rmsd_CA "[measure rmsd $sel_CA $ref_CA]"
+	puts $file_rmsd_BP "[measure rmsd $sel_BP $ref_BP]"
+  
+}
+close $file_rmsd_CA
+close $file_rmsd_BP
+##############################################################rmsf per atom
+#######
+set CA_list_rmsf [measure rmsf $sel_CA ]
+set CA_list_resname [$sel_CA get resname]
+set CA_list_resid [$sel_CA get resid]
+
+set CA_list_len [llength $CA_list_resname]
+
+for {set j 0} { $j < $CA_list_len } { incr j} {
+	set CA_resname [lindex $CA_list_resname $j]
+	set CA_resid [lindex $CA_list_resid $j]
+	set CA_rmsf [lindex $CA_list_rmsf $j]
+	#puts "[lindex $CA_list_rmsf $j]"
+	puts $file_rmsf_CA "$CA_resname $CA_resid CA $CA_rmsf"
+}
+#########
+#set BP_list_rmsf [measure rmsf $sel_BP ]
+#set BP_list_resname [$sel_BP get resname]
+#set BP_list_resid [$sel_BP get resid]
+#set BP_list_type [$sel_BP get type]
+
+#set BP_list_len [llength $BP_list_type]
+
+#for {set j 0} { $j < $BP_list_len } { incr j} {
+#	set BP_resname [lindex $BP_list_resname $j]
+#	set BP_resid [lindex $BP_list_resid $j]
+#	set BP_type [lindex $BP_list_type $j]
+#	set BP_rmsf [lindex $BP_list_rmsf $j]
+	#puts "[lindex $BP_list_rmsf $j]"
+#	puts $file_rmsf_BP "$BP_resname $BP_resid $BP_type $BP_rmsf"
+#}
+
+
+####################rmsf per residue
+###all protein
+
+
+set sel_pro_CA [atomselect $mol "protein and noh and name CA"]
+set pro_CA_list_resname [$sel_pro_CA get resname]
+set pro_CA_list_resid [$sel_pro_CA get resid]
+set pro_CA_list_len [llength $pro_CA_list_resid]
+
+
+for {set j 0} { $j < $pro_CA_list_len } { incr j} {
+	set resname [lindex $pro_CA_list_resname $j]
+        set resid [lindex $pro_CA_list_resid $j]
+        set res [atomselect $mol "protein and resid $resid and noh"]
+	set ind [$res get index]
+	set tot_rmsf 0
+	set tot_mass 0
+	foreach index $ind {
+		set atom [atomselect $mol "index $index"]
+		set rmsf [measure rmsf $atom]
+		set mass [$atom get mass]
+		set tot_rmsf [expr $tot_rmsf+$rmsf*$rmsf*$mass]
+		set tot_mass [expr $tot_mass+$mass]
+	}
+	set rmsfperres [expr sqrt($tot_rmsf/$tot_mass)]
+	puts $file_rmsf_pro  "$resid $resname $rmsfperres"
+
+}
+close $file_rmsf_pro
+
+########################
+set sel_BP [atomselect $mol "protein and noh and (resid 46 49 352 320 44 316 69 356 420 421 42 45 417) and name CA"]
+set BP_list_resname [$sel_BP get resname]
+set BP_list_resid [$sel_BP get resid]
+set BP_list_len [llength $BP_list_resid]
+
+
+for {set j 0} { $j < $BP_list_len } { incr j} {
+	set resname [lindex $BP_list_resname $j]
+        set resid [lindex $BP_list_resid $j]
+        set res [atomselect $mol "protein and resid $resid and noh"]
+	set ind [$res get index]
+	set tot_rmsf 0
+	set tot_mass 0
+	foreach index $ind {
+		set atom [atomselect $mol "index $index"]
+		set rmsf [measure rmsf $atom]
+		set mass [$atom get mass]
+		set tot_rmsf [expr $tot_rmsf+$rmsf*$rmsf*$mass]
+		set tot_mass [expr $tot_mass+$mass]
+	}
+	set rmsfperres [expr sqrt($tot_rmsf/$tot_mass)]
+	puts $file_rmsf_BP  "$resid $resname $rmsfperres"
+
+}
+close $file_rmsf_BP
+
+exit

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?><module codename="cz.caver.bioprodict">
+    <module_version install_time="1405968118287" last="true" origin="installer" specification_version="1.0">
+        <file crc="2589285088" name="config/Modules/cz-caver-bioprodict.xml"/>
+        <file crc="4053918565" name="modules/cz-caver-bioprodict.jar"/>
+    </module_version>
+</module>

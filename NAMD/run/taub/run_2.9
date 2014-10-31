@@ -1,0 +1,107 @@
+#!/bin/tcsh
+
+if ( $# < 3 ) then
+  echo "This script requires three arguments:"
+  echo "  NAMD input file"
+  echo "  NAMD log file"
+  echo "  number of nodes (number of cores / 12)"
+  echo '  queue (defaults to "cse", other option is "test")'
+  exit -1
+endif
+
+set CONFFILE = $1
+#set CONF = $1
+shift
+set LOGFILE = $1
+#set LOG = $1
+#set CONFFILE = $CONF.inp
+#set LOGFILE = $LOG.log 
+shift
+set NUMNODES = $1
+shift
+
+set QUEUE = cse
+#if ( $NUMNODES > 256 ) set QUEUE = wide
+
+if ( $# ) then
+  set QUEUE = $1
+  shift
+endif
+
+if ( $QUEUE == test ) then
+  set TIME = 00:30:00
+  set QUEUE = cse
+  #if ( $NUMNODES <= 16 ) set QUEUE = debug
+  #if ( $NUMNODES > 256 ) set QUEUE = wide
+else if ( $QUEUE == secondary ) then
+  set TIME = 04:00:00
+else
+  set TIME = 72:00:00
+endif
+
+if ( ! -f $CONFFILE) then
+  echo "NAMD input file $CONFFILE does not exist!"
+  exit -1
+endif
+
+if ( -f $LOGFILE) then
+  echo "NAMD output file $LOGFILE already exists!"
+  cp -p $LOGFILE $LOGFILE.BAK
+  rm -f $LOGFILE
+  echo "Old version of NAMD output file $LOGFILE has been renamed $LOGFILE.BAK!"
+# exit -1
+endif
+
+set RUNDIR = `pwd`
+set TRACENAME = $LOGFILE:t:r.proj
+set TRACEROOT = ~/scratch/$TRACENAME
+
+echo "Submitting NAMD run to batch queue..."
+echo ""
+
+# Run in a batch queue
+#cat << ENDINPUT
+qsub -q ${QUEUE} -V -j oe -N $CONFFILE -l walltime=${TIME},nodes=${NUMNODES}:ppn=12 << ENDINPUT
+#!/bin/tcsh
+
+cd $RUNDIR
+
+echo \$PBS_NODEFILE
+cat \$PBS_NODEFILE
+set NP = \`awk 'END {print NR}' \$PBS_NODEFILE\`
+echo \$NP
+
+# mkdir $TRACEROOT
+
+# scratch filesystem is better for files read on every node
+set BINDIR = /home/jcphill/NAMD_2.9/NAMD_2.9_Linux-x86_64-ibverbs
+set MPIEXEC = /home/jcphill/NAMD_scripts/mpiexec_wrapper
+# cp \$BINDIR/charmrun \$BINDIR/namd2 \$SCR
+
+# For now, we need to make sure to re-load the MPI module
+# This requirement will probably go away shortly.
+module load mvapich2/1.6-gcc+ifort
+
+#mvapich2-start-mpd
+
+\$BINDIR/charmrun +p\$NP ++mpiexec \$BINDIR/namd2 +setcpuaffinity $CONFFILE >& $LOGFILE
+
+#mpdallexit
+
+# cp $CONFFILE $LOGFILE $TRACEROOT
+
+ENDINPUT
+
+echo ""
+echo "NAMD is submitted to the queue, to check on your job use this command:"
+echo ""
+echo "    qstat -u $USER"
+echo ""
+echo "Your job is running if there is an R (running) in the S (state) column."
+echo "You may monitor progress with this command:"
+echo ""
+echo "    tail -F $LOGFILE"
+echo ""
+echo "You will need to press Control-C to exit the tail command."
+echo ""
+

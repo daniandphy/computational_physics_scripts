@@ -1,0 +1,24 @@
+#!/bin/bash
+
+JOBNAME="${1/%.conf/}"
+NCPUS="${2}"
+echo "$JOBNAME"
+if [ -z "$1" ]; then
+  echo "Useage: runl NAMD_CONF_FILE PROCS"
+  exit
+fi
+if [ ! -f $JOBNAME.conf ]; then
+	echo "NAMD input file $JOBNAME.conf does not exist!"
+	exit -1
+fi
+
+if [ -f $JOBNAME.log ]; then
+	echo "NAMD output file $JOBNAME.log already exists!"
+	mv $JOBNAME.log $JOBNAME.log.BAK
+	echo "Moving..."
+fi	
+
+qsub -q linux -pe linux_smp $NCPUS -N $JOBNAME -j y -o ~/Jobs << EOF
+cd "$PWD"
+namd2 $JOBNAME.conf >! $JOBNAME.log
+EOF

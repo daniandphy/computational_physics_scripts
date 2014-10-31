@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?><module codename="com.caversoft.console">
+    <module_version install_time="1405968097410" last="true" origin="installer" specification_version="1.0">
+        <file crc="1917898643" name="config/Modules/com-caversoft-console.xml"/>
+        <file crc="2021569784" name="modules/com-caversoft-console.jar"/>
+    </module_version>
+</module>

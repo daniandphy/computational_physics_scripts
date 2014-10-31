@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?><module codename="com.caversoft.core">
+    <module_version install_time="1405968095385" last="true" origin="installer" specification_version="1.0">
+        <file crc="1633174453" name="config/Modules/com-caversoft-core.xml"/>
+        <file crc="190161413" name="modules/com-caversoft-core.jar"/>
+        <file crc="4010023420" name="modules/ext/Jama-1.0.2.jar"/>
+        <file crc="2331039807" name="modules/ext/commons-net-2.0.jar"/>
+        <file crc="2108545950" name="modules/ext/dt3d.jar"/>
+        <file crc="3330418822" name="modules/ext/javahelp-2.0.02.jar"/>
+        <file crc="2049434021" name="modules/ext/ml.jar"/>
+        <file crc="1933678131" name="modules/ext/mysql-connector-java-5.1.18-bin.jar"/>
+        <file crc="656815550" name="modules/ext/slf4j-api-1.7.5.jar"/>
+        <file crc="2888927955" name="modules/ext/slf4j-simple-1.7.5.jar"/>
+        <file crc="1469169346" name="modules/ext/vecmath.jar"/>
+        <file crc="4112002034" name="modules/ext/xstream-1.4.4.jar"/>
+        <file crc="3443924924" name="modules/ext/xstream-license.txt"/>
+    </module_version>
+</module>

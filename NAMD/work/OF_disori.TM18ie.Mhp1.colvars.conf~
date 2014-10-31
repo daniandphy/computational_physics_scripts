@@ -1,0 +1,77 @@
+
+#############################################################
+## Collective Variables                                    ##
+#############################################################
+
+# AAC
+
+# Global parameters
+colvarsTrajFrequency	1
+colvarsTrajAppend	off
+analysis		off
+
+colvar {
+  name 1 
+  width 0.1
+  outputAppliedForce on
+  outputVelocity on
+
+  orientation { 
+    atoms { 
+      atomsFile Mhp1_OF-IF_orient-TM18ie.reference.pdb
+      atomsCol B
+      atomsColValue 1
+    }
+    refpositionsfile Mhp1_OF-IF_orient-TM18ie.reference.pdb
+    refpositionscol B
+    refpositionscolvalue 1
+  }
+}
+
+colvar {
+  name 2 
+  width 0.1
+  outputAppliedForce on
+  outputVelocity on
+
+  orientation {
+    atoms { 
+      atomsFile Mhp1_OF-IF_orient-TM18ie.reference.pdb
+      atomsCol B
+      atomsColValue 2
+    }
+    refpositionsfile Mhp1_OF-IF_orient-TM18ie.reference.pdb
+    refpositionscol B
+    refpositionscolvalue 2
+  }
+}
+
+colvar {
+  name 3 
+  width 0.1
+  outputAppliedForce on
+  outputVelocity on
+
+  orientation { 
+    atoms { 
+      atomsFile Mhp1_OF-IF_orient-TM18ie.reference.pdb
+      atomsCol B
+      atomsColValue 3
+    }
+    refpositionsfile Mhp1_OF-IF_orient-TM18ie.reference.pdb
+    refpositionscol B 
+    refpositionscolvalue 3
+  }
+}
+
+
+
+harmonic {
+    name harm
+    colvars 1 2 3  
+    centers (  9.99671891604547e-01 , -4.19180430369916e-03 ,  1.64986973078792e-02 ,  1.91397727157322e-02 ) (  9.93831609602229e-01 , -2.16032984578698e-02 ,  4.10748919776925e-02 ,  1.00721807470898e-01 ) (  9.70092119969346e-01 ,  1.77818198279898e-01 , -1.15824191566154e-01 , -1.17841944068813e-01 ) 
+    targetCenters (1, 0, 0, 0) (1, 0, 0, 0) (1, 0, 0, 0) 
+    forceConstant 200 
+    targetNumSteps 10000000
+}
+

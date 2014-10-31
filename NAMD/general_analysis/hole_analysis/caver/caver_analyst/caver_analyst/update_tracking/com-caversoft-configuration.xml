@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?><module codename="com.caversoft.configuration">
+    <module_version install_time="1405968096390" last="true" origin="installer" specification_version="1.0">
+        <file crc="2520268228" name="config/Modules/com-caversoft-configuration.xml"/>
+        <file crc="1285930609" name="modules/com-caversoft-configuration.jar"/>
+    </module_version>
+</module>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?><module codename="cz.caver.caver3">
+    <module_version install_time="1405968108015" last="true" origin="installer" specification_version="1.0">
+        <file crc="1407313996" name="config/Modules/cz-caver-caver3.xml"/>
+        <file crc="451991479" name="modules/cz-caver-caver3.jar"/>
+        <file crc="4139983813" name="modules/ext/kd.jar"/>
+    </module_version>
+</module>

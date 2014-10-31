@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?><module codename="cz.caver.raytracer">
+    <module_version install_time="1405968119731" last="true" origin="installer" specification_version="1.0">
+        <file crc="2135743639" name="config/Modules/cz-caver-raytracer.xml"/>
+        <file crc="2350882627" name="modules/cz-caver-raytracer.jar"/>
+    </module_version>
+</module>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?><module codename="cz.caver.renderer">
+    <module_version install_time="1405968113981" last="true" origin="installer" specification_version="1.0">
+        <file crc="2297698791" name="config/Modules/cz-caver-renderer.xml"/>
+        <file crc="1495181165" name="modules/cz-caver-renderer.jar"/>
+        <file crc="2025842417" name="modules/ext/rsyntaxtextarea.jar"/>
+    </module_version>
+</module>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?><module codename="com.caversoft.color">
+    <module_version install_time="1405968098440" last="true" origin="installer" specification_version="1.0">
+        <file crc="18105313" name="config/Modules/com-caversoft-color.xml"/>
+        <file crc="199278977" name="modules/com-caversoft-color.jar"/>
+    </module_version>
+</module>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?><module codename="cz.caver.security">
+    <module_version install_time="1405968102538" last="true" origin="installer" specification_version="1.0">
+        <file crc="3941392565" name="config/Modules/cz-caver-security.xml"/>
+        <file crc="1544442536" name="modules/cz-caver-security.jar"/>
+    </module_version>
+</module>

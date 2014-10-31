@@ -1,0 +1,45 @@
+from prody import *
+import numpy as np
+import matplotlib.pyplot as plt
+
+PDB="../TM3_TM8_CA_apo_mut.pdb"
+DCD="../TM3_TM8_CA_apo_mut.aligned.dcd"
+name="TM3-TM8"
+
+
+def plotSqFlucts(modesarg,out_put='ScaledSqFlucts.pdf',resid_vec=None,xstep=1,legends=[] ,**kwargs):
+	"""Show scaled square fluctuations using :func:`~matplotlib.pyplot.plot`.
+	Modes or mode sets given as additional arguments will be scaled to have
+	the same mean squared fluctuations as *modes*."""
+	import matplotlib.pyplot as plt
+        
+	show=[]
+	plt.xlabel('Indices')
+	plt.ylabel('Square fluctuations')
+	i=0
+	for modes in modesarg:
+		sqf = calcSqFlucts(modes)
+		if len(legends)>0:show.append(plt.plot( sqf,
+		label=legends[i],**kwargs))
+		else:show.append(plt.plot( sqf,label=str(modes),**kwargs))
+		
+		
+		print(str(modes))
+		i+=1
+	
+	if resid_vec!=None: xticks_labels=resid_vec[::xstep]
+	else: xticks_labels=range(0,len(sqf),xstep)
+	xticks_number=range(0,len(sqf),xstep)
+	plt.xticks(xticks_number,xticks_labels,rotation=90)
+        plt.legend()	
+	plt.savefig(out_put)
+
+
+
+
+pca=loadModel(name+'.pca.npz')
+
+resid_vec=range(108,139)+range(403,434)
+legends=['pca1','pca2','pc3']
+
+plotSqFlucts((pca[:2],pca[1:2],pca[2:3]),out_put='first_three_pca.pdf',resid_vec=resid_vec,xstep=2,legends=legends)
